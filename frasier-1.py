@@ -49,6 +49,7 @@ selected_frasier = frasier.loc[(frasier['cast'] == 'Frasier') | (frasier['cast']
 
 #Divide the dataframe into Cast which will be labels and Dialog that will be features
 frasier_cast = selected_frasier['cast']
+frasier_dialog = selected_frasier['dialog']
 
 #Number of dialog assigned to each character
 cast_count = frasier_cast.value_counts()
@@ -59,11 +60,11 @@ print(frasier_cast.value_counts())
 #binarize the labels
 labels = label_binarize(frasier_cast, classes=['Frasier', 'Roz', 'Niles', 'Martin', 'Daphne'] )
 
-#Extract the dialoges
-frasier_dialog = selected_frasier['dialog']
+
+
 
 #Lower and split the dialog
-#for regular expressions to keep only letters we will use nltk Regular expression package
+#and use regular expression to keep only letters we will use nltk Regular expression package
 tkr = RegexpTokenizer('[a-zA-Z]+')
 
 frasier_dia_split = []
@@ -85,10 +86,13 @@ w2v = Word2Vec(sentences=frasier_dia_split, size=vector_size, window = window_si
 
 w2vModel = w2v.wv
 
+#save model
 w2v.save('Word2vecModel')
 w2v.wv.save_word2vec_format('Word2vecModel.txt', binary=False)
 w2v.wv.save_word2vec_format('Word2vecModel.bin', binary=True)
 
+
+#Tokenize and convert to integers
 tokenizer = Tokenizer()
 tokenizer.fit_on_texts(frasier_dia_split)
 X = tokenizer.texts_to_sequences(frasier_dia_split)
@@ -135,14 +139,14 @@ truePositiveRate = dict()
 rocAucScore = dict()
 castDict = {0:'Fraiser', 1:'Roz', 2:'Niles', 3:'Martin', 4:'Daphne'}
 
-for i in range(5):
+for i in range(labels.shape[1]):
    falsePositiveRate[i], truePositiveRate[i], _ = roc_curve(y_test[:, i], y_pred[:, i])
    rocAucScore[i] = auc(falsePositiveRate[i], truePositiveRate[i])
     
     
 #ROC curve for each cast member
     
-for i in range(5):
+for i in range(labels.shape[1]):
     plt.figure(i)
     plt.plot(falsePositiveRate[i], truePositiveRate[i], color='green',
              lw=1, linestyle='-.', label='ROC curve (area = %0.2f) for %s' % (rocAucScore[i], castDict[i]))
@@ -152,7 +156,7 @@ for i in range(5):
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
     plt.title('ROC curve for the cast')
-    plt.legend(loc="top right")
+    plt.legend(loc="upper left")
     plt.show()
 
 
