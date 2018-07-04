@@ -36,7 +36,8 @@ logging.basicConfig(format='%(asctime)s : %(levelname) s : %(message)s', level=l
 #Set random seed
 np.random.seed(24)
 
-'''Get Dataset
+'''
+Get Dataset
 
 '''
 #read CSV file containing dialog and cast, using Pandas , to get a dataframe
@@ -62,7 +63,7 @@ labels = label_binarize(frasier_cast, classes=['Frasier', 'Roz', 'Niles', 'Marti
 frasier_dialog = selected_frasier['dialog']
 
 #Lower and split the dialog
-#for regular expressiond to keep only letters we will use nltk Regular expression package
+#for regular expressions to keep only letters we will use nltk Regular expression package
 tkr = RegexpTokenizer('[a-zA-Z]+')
 
 frasier_dia_split = []
@@ -73,7 +74,7 @@ for i, line in enumerate(frasier_dialog):
     dialog = tkr.tokenize(str(dialog))
     frasier_dia_split.append(dialog)
     
-#FBuild a word2vec model to group words in how they are close together, using Gensim
+#Build a word2vec model to group words in how they are close together, using Gensim
 
 
 vector_size = 100
